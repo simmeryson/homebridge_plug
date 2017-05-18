@@ -1,6 +1,9 @@
+var exec = require("child_process").exec;
 var swich = require('./lib/gk.js');
 
 var Service, Characteristic, Accessory, UUIDGen;
+
+var accessory_prefix = "haier";// debug 'Accessory with the same UUID '
 
 module.exports = function(homebridge) {
   Accessory = homebridge.platformAccessory;
@@ -48,7 +51,7 @@ HaierOsPlatform.prototype.addAccessory = function (data) {
 
   if (!accessory) {
     // Setup accessory as SWITCH (8) category.
-    var uuid = UUIDGen.generate(data.name);
+    var uuid = UUIDGen.generate(accessory_prefix + data.name);
     accessory = new Accessory(data.name, uuid, 8);
 
     // Setup HomeKit switch service
