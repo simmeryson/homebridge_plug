@@ -1,6 +1,6 @@
 {
   "name": "haierplugin",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "testplug",
   "main": "index.js",
   "scripts": {
@@ -10,6 +10,10 @@
     "first",
     "test"
   ],
+    "repository": {
+    "type": "git",
+    "url": "https://github.com/simmeryson/homebridge_plug.git"
+  },
   "author": "gk",
   "license": "ISC",
   "dependencies": {

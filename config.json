@@ -1,0 +1,24 @@
+{
+  "bridge": {
+    "name": "HomebridgeGK",
+    "username": "CC:22:3D:E3:CE:30",
+    "port": 51826,
+    "pin": "031-45-666"
+  },
+
+  "description": "This is an example configuration file with one fake accessory and one fake platform. You can use this as a template for creating your own configuration file containing devices you actually own.",
+
+
+  "platforms": [
+    {
+      "platform" : "haierplug",
+      "name" : "haierplug",
+      "switches": [{
+        "name" : "海尔播放器",
+        "on_cmd": "mkdir ~/12321",
+        "off_cmd": "",
+        "state_cmd": "echo 'state'"
+      }]
+    }
+  ]
+}
