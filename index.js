@@ -9,17 +9,18 @@ module.exports = function(homebridge) {
   Characteristic = homebridge.hap.Characteristic;
   UUIDGen = homebridge.hap.uuid;
 
-  homebridge.registerPlatform("homebridge-haierplug", "haierplug", HaierOsPlatform, true);    
+  homebridge.registerPlatform("homebridge-haierplugin", "haierplug", HaierOsPlatform, true);    
 }
 
 function  HaierOsPlatform(log, config, api) {
   log("HaierOsPlatform Init");
 
   this.log = log;
-  this.config = config;
-  this.yeeAccessories = [];
+  this.config = config || {"platform": "haierplug"};
+  this.switches = this.config.switches || [];
 
-  var platform = this;
+  this.accessories = {};
+  this.polling = {};
 
   if (api) {
     this.api = api;
@@ -60,7 +61,7 @@ HaierOsPlatform.prototype.addAccessory = function (data) {
     this.setService(accessory);
 
     // Register new accessory in HomeKit
-    this.api.registerPlatformAccessories("homebridge-haierplug", "haierplug", [accessory]);
+    this.api.registerPlatformAccessories("homebridge-haierplugin", "haierplug", [accessory]);
 
     // Store accessory in cache
     this.accessories[data.name] = accessory;
@@ -100,7 +101,7 @@ HaierOsPlatform.prototype.removeAccessory = function (accessory) {
   if (accessory) {
     var name = accessory.context.name;
     this.log(name + " is removed from HomeBridge.");
-    this.api.unregisterPlatformAccessories("homebridge-haierplug", "haierplug", [accessory]);
+    this.api.unregisterPlatformAccessories("homebridge-haierplugin", "haierplug", [accessory]);
     delete this.accessories[name];
   }
 }

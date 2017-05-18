@@ -1,14 +1,12 @@
 {
-  "name": "haierplugin",
-  "version": "1.0.2",
-  "description": "testplug",
-  "main": "index.js",
+  "name": "homebridge-haierplugin",
+  "version": "1.0.4",
+  "description": "plugin for HomeBridge (API 2.0): https://github.com/nfarina/homebridge",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "first",
-    "test"
+    "homebridge-plugin"
   ],
     "repository": {
     "type": "git",
@@ -18,5 +16,9 @@
   "license": "ISC",
   "dependencies": {
     "is-valid": "^1.1.0"
+  },
+    "engines": {
+    "node": ">=0.12.0",
+    "homebridge": ">=0.3.0"
   }
 }
