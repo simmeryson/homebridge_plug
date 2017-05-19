@@ -13,6 +13,7 @@
     {
       "platform" : "haierplug",
       "name" : "haierplug",
+      "server_ip":"/Users/guokai/bbbbbb.sock",
       "switches": [{
         "name" : "海尔播放器",
         "on_cmd": "mkdir ~/12321",

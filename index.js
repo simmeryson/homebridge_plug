@@ -1,6 +1,9 @@
 var exec = require("child_process").exec;
 var swich = require('./lib/gk.js');
 var net = require('net');
+var path = require('path')
+
+console.log(path.resolve(__dirname, '.'));
 
 var Service, Characteristic, Accessory, UUIDGen;
 
@@ -22,7 +25,7 @@ function  HaierOsPlatform(log, config, api) {
   this.log = log;
   this.config = config || {"platform": "haierplug"};
   this.switches = this.config.switches || [];
-
+  this.server_ip = this.config.server_ip;
   this.accessories = {};
   this.polling = {};
 
@@ -130,20 +133,21 @@ HaierOsPlatform.prototype.setService = function (accessory) {
 // Method to determine current state
 HaierOsPlatform.prototype.getPowerState = function (thisSwitch, callback) {
   var self = this;
+  callback(null, thisSwitch.state);
 
-  if (thisSwitch.polling) {
-    // Get state directly from cache if polling is enabled
-    this.log(thisSwitch.name + " is " + (thisSwitch.state ? "on." : "off."));
-    callback(null, thisSwitch.state);
-  } else {
-    // Check state if polling is disabled
-    this.getState(thisSwitch, function (error, state) {
-      // Update state if command exists
-      if (thisSwitch.state_cmd) thisSwitch.state = state;
-      if (!error) self.log(thisSwitch.name + " is " + (thisSwitch.state ? "on." : "off."));
-      callback(error, thisSwitch.state);
-    });
-  }
+  // if (thisSwitch.polling) {
+  //   // Get state directly from cache if polling is enabled
+  //   this.log(thisSwitch.name + " is " + (thisSwitch.state ? "on." : "off."));
+  //   callback(null, thisSwitch.state);
+  // } else {
+  //   // Check state if polling is disabled
+  //   this.getState(thisSwitch, function (error, state) {
+  //     // Update state if command exists
+  //     if (thisSwitch.state_cmd) thisSwitch.state = state;
+  //     if (!error) self.log(thisSwitch.name + " is " + (thisSwitch.state ? "on." : "off."));
+  //     callback(error, thisSwitch.state);
+  //   });
+  // }
 }
 
 // Method to determine current state
@@ -174,10 +178,9 @@ HaierOsPlatform.prototype.setPowerState = function (thisSwitch, state, callback)
 
 
   var sock = new net.Socket();
-  sock.connect('/Users/guokai/bbbbbb.sock',()=>{
+  sock.connect(self.server_ip,()=>{
     console.log('client connect!');
-    sock.write('Hi, server!\n');
-    sock.write('set on');
+    sock.write('{\'power\':\'' + state +'\'}');
   });
   sock.on('data', (data)=>{
     console.log('client rev: ' + data.toString());
@@ -186,6 +189,9 @@ HaierOsPlatform.prototype.setPowerState = function (thisSwitch, state, callback)
   sock.on('end',()=>{
     console.log('client end!');
   });
+  self.log(thisSwitch.name + " is turned " + (state ? "on." : "off."));
+  thisSwitch.state = state;
+  
   // // Execute command to set state
   // exec(cmd, function (error, stdout, stderr) {
   //   // Error detection
@@ -218,6 +224,11 @@ HaierOsPlatform.prototype.setPowerState = function (thisSwitch, state, callback)
     self.log("Turning " + (state ? "on " : "off ") + thisSwitch.name + " took too long, assuming success." );
     callback();
   }, 1000);
+  
+  if (tout) {
+      clearTimeout(tout);
+      callback(error);
+    }
 }
 
 // Method to retrieve initial state
