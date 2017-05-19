@@ -1,6 +1,6 @@
 {
   "name": "homebridge-haierplugin",
-  "version": "1.0.7",
+  "version": "1.0.10",
   "description": "plugin for HomeBridge (API 2.0): https://github.com/nfarina/homebridge",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

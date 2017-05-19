@@ -1,5 +1,6 @@
 var exec = require("child_process").exec;
 var swich = require('./lib/gk.js');
+var net = require('net');
 
 var Service, Characteristic, Accessory, UUIDGen;
 
@@ -171,31 +172,45 @@ HaierOsPlatform.prototype.setPowerState = function (thisSwitch, state, callback)
   var notCmd = state ? thisSwitch.off_cmd : thisSwitch.on_cmd;
   var tout = null;
 
-  // Execute command to set state
-  exec(cmd, function (error, stdout, stderr) {
-    // Error detection
-    if (error && (state !== thisSwitch.state)) {
-      self.log("Failed to turn " + (state ? "on " : "off ") + thisSwitch.name);
-      self.log(stderr);
-    } else {
-      if (cmd) self.log(thisSwitch.name + " is turned " + (state ? "on." : "off."));
-      thisSwitch.state = state;
-      error = null;
-    }
 
-    // Restore switch after 1s if only one command exists
-    if (!notCmd && !thisSwitch.state_cmd) {
-      setTimeout(function () {
-        self.accessories[thisSwitch.name].getService(Service.Switch)
-          .setCharacteristic(Characteristic.On, !state);
-      }, 1000);
-    }
-
-    if (tout) {
-      clearTimeout(tout);
-      callback(error);
-    }
+  var sock = new net.Socket();
+  sock.connect('/Users/guokai/bbbbbb.sock',()=>{
+    console.log('client connect!');
+    sock.write('Hi, server!\n');
+    sock.write('set on');
   });
+  sock.on('data', (data)=>{
+    console.log('client rev: ' + data.toString());
+    sock.end();
+  });
+  sock.on('end',()=>{
+    console.log('client end!');
+  });
+  // // Execute command to set state
+  // exec(cmd, function (error, stdout, stderr) {
+  //   // Error detection
+  //   if (error && (state !== thisSwitch.state)) {
+  //     self.log("Failed to turn " + (state ? "on " : "off ") + thisSwitch.name);
+  //     self.log(stderr);
+  //   } else {
+  //     if (cmd) self.log(thisSwitch.name + " is turned " + (state ? "on." : "off."));
+  //     thisSwitch.state = state;
+  //     error = null;
+  //   }
+
+  //   // Restore switch after 1s if only one command exists
+  //   if (!notCmd && !thisSwitch.state_cmd) {
+  //     setTimeout(function () {
+  //       self.accessories[thisSwitch.name].getService(Service.Switch)
+  //         .setCharacteristic(Characteristic.On, !state);
+  //     }, 1000);
+  //   }
+
+  //   if (tout) {
+  //     clearTimeout(tout);
+  //     callback(error);
+  //   }
+  // });
 
   // Allow 1s to set state but otherwise assumes success
   tout = setTimeout(function () {
