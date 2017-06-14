@@ -7,7 +7,7 @@ console.log(path.resolve(__dirname, '.'));
 
 var Service, Characteristic, Accessory, UUIDGen;
 
-var accessory_prefix = "haier";// debug 'Accessory with the same UUID '
+var accessory_prefix = "haieros";// debug 'Accessory with the same UUID '
 
 module.exports = function(homebridge) {
   Accessory = homebridge.platformAccessory;
@@ -26,6 +26,7 @@ function  HaierOsPlatform(log, config, api) {
   this.config = config || {"platform": "haierplug"};
   this.switches = this.config.switches || [];
   this.server_ip = this.config.server_ip;
+  this.server_port = this.config.server_port;
   this.accessories = {};
   this.polling = {};
 
@@ -178,7 +179,7 @@ HaierOsPlatform.prototype.setPowerState = function (thisSwitch, state, callback)
 
 
   var sock = new net.Socket();
-  sock.connect(self.server_ip,()=>{
+  sock.connect(self.server_port, self.server_ip,()=>{
     console.log('client connect!');
     sock.write('{\'power\':\'' + state +'\'}');
   });
